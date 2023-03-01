@@ -1,17 +1,17 @@
 <script lang="ts">
-  import svelteLogo from './assets/svelte.svg'
+  import svelteLogo from './assets/svelte.svg';
   import GCodePreview from './lib/GCodePreview.svelte';
-  
+
   let gcodeSrc = '/benchy.gcode';
   let gcodeChunkSize = 500;
 </script>
 
 <main>
   <div>
-    <a href="https://vitejs.dev" target="_blank"> 
+    <a href="https://vitejs.dev" target="_blank">
       <img src="/vite.svg" class="logo" alt="Vite Logo" />
     </a>
-    <a href="https://svelte.dev" target="_blank"> 
+    <a href="https://svelte.dev" target="_blank">
       <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
     </a>
   </div>
@@ -19,16 +19,19 @@
   <h1>GCodePreview with Vite + Svelte</h1>
 
   <div>
-    <GCodePreview src={gcodeSrc} chunkSize={gcodeChunkSize} />
+    <GCodePreview src={gcodeSrc} />
   </div>
-  <button on:click={() => { 
-    gcodeSrc='/ripple_vase.gcode';
-    gcodeChunkSize=null
-  } }>ripple_vase.gcode</button>
-  <button on:click={() => { 
-    gcodeSrc='/benchy.gcode';
-    gcodeChunkSize=500
-  } }>benchy.gcode<br>chunk size = 500</button>
+  <button
+    on:click={() => {
+      gcodeSrc = '/ripple_vase.gcode';
+      gcodeChunkSize = null;
+    }}>ripple_vase.gcode</button
+  >
+  <button
+    on:click={() => {
+      gcodeSrc = '/benchy.gcode';
+    }}>benchy.gcode<br />chunk size = 500</button
+  >
 </main>
 
 <style>

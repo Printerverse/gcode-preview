@@ -18,7 +18,8 @@ onMount(() => {
         canvas,
         allowDragNDrop: true  
     });
-
+    preview.renderExtrusion = true;
+    preview.backgroundColor = 0x00ff00;
     load(src);
 });
 

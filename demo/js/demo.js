@@ -1,5 +1,6 @@
 /*eslint prefer-const: "error"*/
 /* global THREE, GCodePreview, Canvas2Image */
+
 let gcodePreview;
 let favIcon;
 let thumb;
@@ -22,62 +23,71 @@ const drawBuildVolume = document.getElementById('drawBuildVolume');
 // const lineWidth = document.getElementById('line-width');
 
 // const prusaOrange = '#c86e3b';
-const topLayerColor = new THREE.Color(`hsl(180, 50%, 50%)`).getHex();
-const lastSegmentColor = new THREE.Color(`hsl(270, 50%, 50%)`).getHex();
+const topLayerColor = new THREE.Color(`rgb(0,0,255)`).getHex();
+const lastSegmentColor = new THREE.Color(`rgb(0, 255, 0)`).getHex();
 
-function initDemo() { // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+function initDemo() {
+  // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
   const settings = JSON.parse(localStorage.getItem('settings'));
   console.log('settings', settings);
-  
+
   const preview = (window.preview = new GCodePreview.init({
     canvas: document.querySelector('.gcode-previewer'),
     topLayerColor: topLayerColor,
+    initialCameraPosition: [0, 0, 150],
     lastSegmentColor: lastSegmentColor,
-    // lineWidth: 4,
-    buildVolume: settings?.buildVolume || {x: 150, y: 150, z: 150},
-    initialCameraPosition: [0,400,450],
+
+    lineWidth: 1.2,
+    buildVolume: settings?.buildVolume || { x: 0, y: 0, z: 0 },
+
     // debug: true
-    allowDragNDrop: true
+    allowDragNDrop: true,
   }));
 
+  preview.extrusionColor = new THREE.Color('skyblue').getHex();
   preview.renderExtrusion = true;
   preview.renderTravel = false;
   // preview.controls.autoRotate = true;
 
-  startLayer.addEventListener('input', function() {
+  startLayer.addEventListener('input', function () {
     preview.startLayer = +startLayer.value;
-    endLayer.value = preview.endLayer = Math.max(preview.startLayer, preview.endLayer);
+    endLayer.value = preview.endLayer = Math.max(
+      preview.startLayer,
+      preview.endLayer
+    );
     preview.render();
   });
 
-  endLayer.addEventListener('input', function() {
+  endLayer.addEventListener('input', function () {
     preview.endLayer = +endLayer.value;
-    startLayer.value = preview.startLayer = Math.min(preview.startLayer, preview.endLayer);
+    startLayer.value = preview.startLayer = Math.min(
+      preview.startLayer,
+      preview.endLayer
+    );
     preview.render();
   });
 
-  toggleSingleLayerMode.addEventListener('click', function() {
+  toggleSingleLayerMode.addEventListener('click', function () {
     preview.singleLayerMode = toggleSingleLayerMode.checked;
     if (preview.singleLayerMode) {
       startLayer.setAttribute('disabled', 'disabled');
-    } 
-    else {
+    } else {
       startLayer.removeAttribute('disabled');
     }
     preview.render();
   });
 
-  toggleExtrusion.addEventListener('click', function() {
+  toggleExtrusion.addEventListener('click', function () {
     preview.renderExtrusion = toggleExtrusion.checked;
     preview.render();
   });
 
-  toggleTravel.addEventListener('click', function() {
+  toggleTravel.addEventListener('click', function () {
     preview.renderTravel = toggleTravel.checked;
     preview.render();
   });
 
-  toggleHighlight.addEventListener('click', function() {
+  toggleHighlight.addEventListener('click', function () {
     if (toggleHighlight.checked) {
       preview.topLayerColor = topLayerColor;
       preview.lastSegmentColor = lastSegmentColor;
@@ -88,7 +98,7 @@ function initDemo() { // eslint-disable-line no-unused-vars, @typescript-eslint/
     preview.render();
   });
 
-  function updateBuildVolume () {
+  function updateBuildVolume() {
     const x = parseInt(buildVolumeX.value, 10);
     const y = parseInt(buildVolumeY.value, 10);
     const z = parseInt(buildVolumeZ.value, 10);
@@ -96,24 +106,22 @@ function initDemo() { // eslint-disable-line no-unused-vars, @typescript-eslint/
     const draw = drawBuildVolume.checked;
 
     if (draw && !isNaN(x) && !isNaN(y)) {
-      preview.buildVolume = { 
-        x: x, 
+      preview.buildVolume = {
+        x: x,
         y: y,
-        z: z
-      }
-    }
-    else {
+        z: z,
+      };
+    } else {
       preview.buildVolume = null;
     }
-    
+
     preview.render();
 
     if (draw) {
       buildVolumeX.removeAttribute('disabled');
       buildVolumeY.removeAttribute('disabled');
       buildVolumeZ.removeAttribute('disabled');
-    }
-    else {
+    } else {
       buildVolumeX.setAttribute('disabled', 'disabled');
       buildVolumeY.setAttribute('disabled', 'disabled');
       buildVolumeZ.setAttribute('disabled', 'disabled');
@@ -135,15 +143,20 @@ function initDemo() { // eslint-disable-line no-unused-vars, @typescript-eslint/
   //   preview.render();
   // });
 
-  window.addEventListener('resize', function() {
+  window.addEventListener('resize', function () {
     preview.resize();
   });
 
-  snapshot.addEventListener('click', function(evt) {
+  snapshot.addEventListener('click', function (evt) {
     evt.stopPropagation();
     evt.preventDefault();
 
-    Canvas2Image.saveAsJPEG(gcodePreview.canvas,innerWidth, innerHeight, fileName.innerText.replace('.gcode','.jpg'));
+    Canvas2Image.saveAsJPEG(
+      gcodePreview.canvas,
+      innerWidth,
+      innerHeight,
+      fileName.innerText.replace('.gcode', '.jpg')
+    );
   });
 
   gcodePreview = preview;
@@ -154,20 +167,23 @@ function initDemo() { // eslint-disable-line no-unused-vars, @typescript-eslint/
 }
 
 function storeSettings() {
-  localStorage.setItem('settings', JSON.stringify({
-    buildVolume: { 
-      x : gcodePreview.buildVolume.x,
-      y : gcodePreview.buildVolume.y,
-      z : gcodePreview.buildVolume.z,
-    }
-  }));
+  localStorage.setItem(
+    'settings',
+    JSON.stringify({
+      buildVolume: {
+        x: gcodePreview.buildVolume.x,
+        y: gcodePreview.buildVolume.y,
+        z: gcodePreview.buildVolume.z,
+      },
+    })
+  );
 }
 
 function updateUI() {
   startLayer.setAttribute('max', gcodePreview.layers.length);
   endLayer.setAttribute('max', gcodePreview.layers.length);
   endLayer.value = gcodePreview.layers.length;
-  
+
   layerCount.innerText =
     gcodePreview.layers && gcodePreview.layers.length + ' layers';
 
@@ -189,14 +205,16 @@ function updateUI() {
     favIcon = gcodePreview.parser.metadata.thumbnails['16x16'];
     setFavicons(favIcon?.src);
   }
-  
-  if(thumb != gcodePreview.parser.metadata.thumbnails['220x124']) {
+
+  if (thumb != gcodePreview.parser.metadata.thumbnails['220x124']) {
     thumb = gcodePreview.parser.metadata.thumbnails['220x124'];
-    document.getElementById('thumb').src = thumb?.src ?? 'https://via.placeholder.com/120x60?text=noThumbnail';
+    document.getElementById('thumb').src =
+      thumb?.src ?? 'https://via.placeholder.com/120x60?text=noThumbnail';
   }
 }
 
-async function loadGCodeFromServer(file) { // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
+async function loadGCodeFromServer(file) {
+  // eslint-disable-line no-unused-vars, @typescript-eslint/no-unused-vars
   const response = await fetch(file);
 
   if (response.status !== 200) {
@@ -227,12 +245,11 @@ function startLoadingProgressive(gcode) {
     const start = c * chunkSize;
     const end = (c + 1) * chunkSize;
     const chunk = lines.slice(start, end);
-    
+
     c++;
     if (c < chunks) {
-      window.__loadTimer__ = requestAnimationFrame(loadProgressive)
-    }
-    else {
+      window.__loadTimer__ = requestAnimationFrame(loadProgressive);
+    } else {
       startLayer.removeAttribute('disabled');
       endLayer.removeAttribute('disabled');
       console.log(gcodePreview.parser.metadata.thumbnails);
@@ -261,10 +278,10 @@ function humanFileSize(size) {
   );
 }
 
-function setFavicons(favImg){
+function setFavicons(favImg) {
   const headTitle = document.querySelector('head');
   const setFavicon = document.createElement('link');
-  setFavicon.setAttribute('rel','shortcut icon');
-  setFavicon.setAttribute('href',favImg);
+  setFavicon.setAttribute('rel', 'shortcut icon');
+  setFavicon.setAttribute('href', favImg);
   headTitle.appendChild(setFavicon);
 }

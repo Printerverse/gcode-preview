@@ -14,6 +14,7 @@
     "vite": "^3.1.0"
   },
   "dependencies": {
-    "gcode-preview": "file:.."
+    "gcode-preview": "file:..",
+    "three": "^0.150.1"
   }
 }

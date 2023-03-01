@@ -54,7 +54,7 @@ function box( width : number, height: number, depth: number) {
 export function LineBox(x: number,y: number,z: number, color: Color | number | string) : LineSegments<BufferGeometry, LineDashedMaterial> {
     const geometryBox = box( x,y,z);
 
-    const lineSegments = new LineSegments( geometryBox, new LineDashedMaterial( { color: new Color(color), dashSize: 3, gapSize: 1 } ) );
+    const lineSegments = new LineSegments( geometryBox, new LineDashedMaterial( { color: new Color(0x00ff00), dashSize: 3, gapSize: 1 } ) );
     lineSegments.computeLineDistances();
 
     return lineSegments;
